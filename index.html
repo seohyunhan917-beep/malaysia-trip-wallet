@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c2f31">
+  <meta name="description" content="환전한 원화를 기준으로 한국과 말레이시아 여행 비용을 기록하는 개인 여행 지갑">
+  <title>말레이시아 여행 지갑</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c2f31'/%3E%3Cpath d='M17 18h30a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5H17a5 5 0 0 1-5-5V23a5 5 0 0 1 5-5Z' fill='%23e8ff7a'/%3E%3Ccircle cx='42' cy='40' r='4' fill='%230c2f31'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #102829;
+      --muted: #607577;
+      --line: #dbe6e3;
+      --paper: #f4f8f6;
+      --white: #ffffff;
+      --deep: #092729;
+      --deep-2: #0f3d3f;
+      --mint: #baf4d7;
+      --lime: #e8ff7a;
+      --orange: #ff9e6d;
+      --shadow: 0 18px 46px rgba(7, 39, 41, .11);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 92% 3%, rgba(186,244,215,.65), transparent 25rem),
+        var(--paper);
+      font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(27, 129, 132, .3);
+      outline-offset: 2px;
+    }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 90px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: var(--deep); color: var(--lime); box-shadow: var(--shadow); }
+    .brand-mark svg { width: 23px; height: 23px; }
+    .brand h1 { margin: 0; font-size: 1.15rem; letter-spacing: -.03em; }
+    .brand p { margin: 1px 0 0; color: var(--muted); font-size: .78rem; }
+    .utility { display: flex; gap: 8px; }
+    .icon-btn, .ghost-btn { border: 1px solid var(--line); background: rgba(255,255,255,.78); color: var(--ink); border-radius: 13px; min-height: 42px; padding: 0 13px; }
+    .icon-btn { width: 42px; padding: 0; display: grid; place-items: center; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 30px;
+      color: white;
+      background: linear-gradient(135deg, var(--deep), var(--deep-2));
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 290px; height: 290px; right: -80px; top: -130px;
+      border: 58px solid rgba(232,255,122,.08); border-radius: 50%;
+    }
+    .eyebrow { position: relative; z-index: 1; margin: 0 0 8px; color: var(--mint); font-size: .82rem; font-weight: 700; letter-spacing: .04em; }
+    .total { position: relative; z-index: 1; margin: 0; font-size: clamp(2.05rem, 8vw, 3.65rem); line-height: 1.08; letter-spacing: -.06em; font-weight: 800; }
+    .total-note { position: relative; z-index: 1; margin: 9px 0 24px; color: rgba(255,255,255,.7); font-size: .88rem; }
+    .hero-stats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .hero-stat { min-width: 0; padding: 14px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); border-radius: 17px; }
+    .hero-stat span { display: block; color: rgba(255,255,255,.64); font-size: .75rem; margin-bottom: 4px; }
+    .hero-stat strong { display: block; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .actions { display: grid; grid-template-columns: 1.25fr 1fr; gap: 12px; margin: 16px 0 24px; }
+    .action-btn { min-height: 58px; border: 0; border-radius: 18px; font-weight: 800; font-size: .98rem; display: flex; justify-content: center; align-items: center; gap: 9px; }
+    .action-btn.primary { background: var(--lime); color: var(--deep); }
+    .action-btn.secondary { background: var(--white); color: var(--ink); border: 1px solid var(--line); }
+    .content-grid { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(310px,.75fr); gap: 18px; align-items: start; }
+    .card { background: rgba(255,255,255,.86); border: 1px solid rgba(219,230,227,.9); border-radius: var(--radius); padding: 21px; box-shadow: 0 9px 30px rgba(7,39,41,.045); }
+    .card + .card { margin-top: 18px; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 17px; }
+    .card h2 { margin: 0; font-size: 1.02rem; letter-spacing: -.025em; }
+    .small { color: var(--muted); font-size: .78rem; }
+    .empty { padding: 34px 18px; border: 1px dashed #cbdad6; border-radius: 17px; text-align: center; color: var(--muted); }
+    .empty-icon { display: grid; place-items: center; width: 44px; height: 44px; margin: 0 auto 10px; border-radius: 15px; background: #e9f4f0; color: var(--deep-2); }
+    .empty strong { display: block; color: var(--ink); margin-bottom: 3px; }
+    .transaction-list { list-style: none; padding: 0; margin: 0; }
+    .transaction { display: grid; grid-template-columns: 42px minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 13px 0; border-top: 1px solid #edf2f0; }
+    .transaction:first-child { border-top: 0; padding-top: 0; }
+    .transaction:last-child { padding-bottom: 0; }
+    .tx-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; background: #e9f4f0; font-size: 1.05rem; }
+    .tx-main { min-width: 0; }
+    .tx-title { font-weight: 700; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .tx-meta { color: var(--muted); font-size: .75rem; }
+    .tx-amount { text-align: right; font-weight: 800; }
+    .tx-foreign { display: block; color: var(--muted); font-size: .72rem; font-weight: 500; }
+    .delete-btn { border: 0; background: none; color: #9aabaa; padding: 4px; margin-top: 3px; font-size: .72rem; }
+    .bars { display: grid; gap: 14px; }
+    .bar-row { display: grid; gap: 6px; }
+    .bar-label { display: flex; justify-content: space-between; gap: 12px; font-size: .82rem; }
+    .bar-label strong { font-size: .82rem; }
+    .bar-track { height: 8px; background: #edf2f0; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #1d7474, #50b797); }
+    .wallet-note { display: flex; gap: 11px; align-items: flex-start; padding: 13px; margin-top: 15px; border-radius: 15px; background: #f1f8f5; color: var(--muted); font-size: .78rem; }
+    .wallet-note svg { flex: 0 0 auto; margin-top: 1px; }
+    dialog { width: min(520px, calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: 26px; color: var(--ink); background: var(--white); box-shadow: 0 28px 90px rgba(0,0,0,.26); }
+    dialog::backdrop { background: rgba(3,22,23,.58); backdrop-filter: blur(4px); }
+    .dialog-head { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 21px 22px 13px; background: var(--white); }
+    .dialog-head h2 { margin: 0; font-size: 1.15rem; }
+    .close-btn { border: 0; background: #edf3f1; width: 38px; height: 38px; border-radius: 12px; color: var(--ink); }
+    .form { padding: 6px 22px 24px; display: grid; gap: 16px; }
+    .field { display: grid; gap: 7px; }
+    .field label, .field-label { font-size: .82rem; font-weight: 700; }
+    .field input, .field select, .field textarea { width: 100%; border: 1px solid #cfddda; background: #fbfdfc; color: var(--ink); border-radius: 14px; min-height: 50px; padding: 0 14px; }
+    .field textarea { min-height: 76px; padding-top: 12px; resize: vertical; }
+    .field .amount-input { font-size: 1.28rem; font-weight: 800; letter-spacing: -.02em; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .segmented { display: grid; grid-template-columns: repeat(2,1fr); gap: 7px; padding: 5px; background: #edf3f1; border-radius: 15px; }
+    .segmented label { position: relative; }
+    .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+    .segmented span { display: flex; align-items: center; justify-content: center; min-height: 40px; border-radius: 11px; color: var(--muted); font-size: .86rem; font-weight: 700; }
+    .segmented input:checked + span { color: var(--deep); background: var(--white); box-shadow: 0 3px 9px rgba(7,39,41,.08); }
+    .hint { margin: -2px 0 0; color: var(--muted); font-size: .74rem; }
+    .submit { min-height: 54px; margin-top: 4px; border: 0; border-radius: 16px; background: var(--deep); color: white; font-weight: 800; }
+    .estimated-field[hidden] { display: none; }
+    .toast { position: fixed; z-index: 50; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; padding: 12px 17px; border-radius: 13px; color: white; background: var(--deep); box-shadow: var(--shadow); font-size: .85rem; transition: .22s ease; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .menu { position: absolute; right: 16px; top: 76px; z-index: 10; width: 205px; padding: 7px; border: 1px solid var(--line); border-radius: 15px; background: white; box-shadow: var(--shadow); }
+    .menu[hidden] { display: none; }
+    .menu button, .menu label { display: flex; width: 100%; align-items: center; gap: 9px; padding: 10px 11px; border: 0; border-radius: 10px; background: white; color: var(--ink); font-size: .82rem; text-align: left; cursor: pointer; }
+    .menu button:hover, .menu label:hover { background: #f0f6f3; }
+    .menu input { display: none; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 22px, 620px); padding-top: 18px; }
+      .brand p { display: none; }
+      .hero { padding: 24px 20px; border-radius: 25px; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .hero-stat:last-child { grid-column: 1 / -1; }
+      .content-grid { grid-template-columns: 1fr; }
+      .side { display: contents; }
+      .category-card { order: 2; }
+      .history-card { order: 1; }
+      .row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 420px) {
+      .topbar { align-items: flex-start; }
+      .brand h1 { font-size: 1rem; }
+      .hero-stats { gap: 8px; }
+      .hero-stat { padding: 12px 10px; }
+      .actions { grid-template-columns: 1fr 1fr; }
+      .action-btn { min-height: 54px; font-size: .89rem; }
+      .card { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v10a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-10Z" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16M15.5 15h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div><h1>말레이시아 여행 지갑</h1><p>실제 환전 금액으로 계산해요</p></div>
+      </div>
+      <div class="utility">
+        <button class="icon-btn" id="menuButton" aria-label="데이터 관리" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu" id="dataMenu" hidden>
+      <button id="exportCsv">CSV로 내보내기</button>
+      <button id="exportJson">백업 파일 저장</button>
+      <label>백업 파일 불러오기<input type="file" id="importJson" accept="application/json"></label>
+    </div>
+
+    <section class="hero" aria-labelledby="totalHeading">
+      <p class="eyebrow" id="totalHeading">지금까지 쓴 여행 비용</p>
+      <p class="total" id="totalKrw">₩0</p>
+      <p class="total-note" id="totalNote">첫 지출을 기록하면 여기에서 바로 확인할 수 있어요.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span>링깃 현금 잔액</span><strong id="myrBalance">RM 0.00</strong></div>
+        <div class="hero-stat"><span>현재 현금 환율</span><strong id="averageRate">환전 전</strong></div>
+        <div class="hero-stat"><span>기록한 지출</span><strong id="expenseCount">0건</strong></div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="action-btn primary" data-open="expenseDialog"><span aria-hidden="true">＋</span> 지출 기록</button>
+      <button class="action-btn secondary" data-open="exchangeDialog"><span aria-hidden="true">⇄</span> 환전 등록</button>
+    </div>
+
+    <div class="content-grid">
+      <section class="card history-card">
+        <div class="card-head"><h2>최근 기록</h2><span class="small" id="recordSummary">아직 기록이 없어요</span></div>
+        <div id="history"></div>
+      </section>
+      <aside class="side">
+        <section class="card category-card">
+          <div class="card-head"><h2>분류별 사용</h2><span class="small">원화 기준</span></div>
+          <div id="categories"></div>
+          <div class="wallet-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 10v6M12 7.5v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span>환전은 비용에 더하지 않고, 실제 사용한 링깃만 당시 현금 환율로 계산해요.</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="expenseDialog">
+    <div class="dialog-head"><h2>지출 기록</h2><button class="close-btn" type="button" aria-label="닫기">✕</button></div>
+    <form class="form" id="expenseForm">
+      <div class="field">
+        <span class="field-label">사용한 곳</span>
+        <div class="segmented">
+          <label><input type="radio" name="place" value="MY" checked><span>🇲🇾 말레이시아</span></label>
+          <label><input type="radio" name="place" value="KR"><span>🇰🇷 한국</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="expenseAmount">금액 <span id="currencyLabel">(MYR)</span></label>
+        <input class="amount-input" id="expenseAmount" name="amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required>
+        <p class="hint" id="conversionHint">환전 후에는 예상 원화 금액을 바로 보여드려요.</p>
+      </div>
+      <div class="row">
+        <div class="field"><label for="expenseCategory">분류</label><select id="expenseCategory" name="category"><option>식비</option><option>교통</option><option>항공</option><option>숙박</option><option>관광</option><option>쇼핑</option><option>통신</option><option>기타</option></select></div>
+        <div class="field"><label for="expensePayment">결제 방식</label><select id="expensePayment" name="payment"><option value="cash">현금</option><option value="card">카드</option><option value="transfer">계좌이체</option></select></div>
+      </div>
+      <div class="field estimated-field" id="actualKrwField" hidden>
+        <label for="actualKrw">실제 카드 청구액 (선택)</label>
+        <input id="actualKrw" name="actualKrw" type="number" inputmode="numeric" min="0" step="1" placeholder="청구 전이면 비워두세요">
+        <p class="hint">비워두면 현재 현금 환율로 예상하고, 나중에 기록을 수정할 수 있어요.</p>
+      </div>
+      <div class="row">
+        <div class="field"><label for="expenseDate">날짜</label><input id="expenseDate" name="date" type="date" required></div>
+        <div class="field"><label for="expenseNote">사용처·메모</label><input id="expenseNote" name="note" type="text" maxlength="60" placeholder="예: 야시장 저녁"></div>
+      </div>
+      <button class="submit" type="submit">지출 저장</button>
+    </form>
+  </dialog>
+
+  <dialog id="exchangeDialog">
+    <div class="dialog-head"><h2>환전 등록</h2><button class="close-btn" type="button" aria-label="닫기">✕</button></div>
+    <form class="form" id="exchangeForm">
+      <div class="field"><label for="exchangeKrw">지불한 원화</label><input class="amount-input" id="exchangeKrw" name="krw" type="number" inputmode="numeric" min="1" step="1" placeholder="300,000" required></div>
+      <div class="field"><label for="exchangeMyr">받은 링깃</label><input class="amount-input" id="exchangeMyr" name="myr" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="1,000.00" required><p class="hint" id="exchangeHint">두 금액을 입력하면 실제 환율을 계산해요.</p></div>
+      <div class="row">
+        <div class="field"><label for="exchangeDate">환전일</label><input id="exchangeDate" name="date" type="date" required></div>
+        <div class="field"><label for="exchangeNote">메모</label><input id="exchangeNote" name="note" type="text" maxlength="60" placeholder="예: 공항 환전소"></div>
+      </div>
+      <button class="submit" type="submit">환전 저장</button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = "malaysia-trip-wallet-v1";
+      const categoryIcons = {"식비":"🍜","교통":"🚌","항공":"✈️","숙박":"🛏️","관광":"🎟️","쇼핑":"🛍️","통신":"📶","기타":"•"};
+      let state = load();
+      const $ = selector => document.querySelector(selector);
+      const $$ = selector => [...document.querySelectorAll(selector)];
+      const won = value => new Intl.NumberFormat("ko-KR", {style:"currency", currency:"KRW", maximumFractionDigits:0}).format(Math.round(value || 0));
+      const myr = value => `RM ${new Intl.NumberFormat("en-MY", {minimumFractionDigits:2, maximumFractionDigits:2}).format(value || 0)}`;
+      const uid = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const today = () => new Date().toLocaleDateString("sv-SE");
+      const esc = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+
+      function load() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (parsed && Array.isArray(parsed.exchanges) && Array.isArray(parsed.expenses)) return parsed;
+        } catch (_) {}
+        return {exchanges: [], expenses: []};
+      }
+      function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); render(); }
+      function totals() {
+        const exchangedMyr = state.exchanges.reduce((s, x) => s + Number(x.myr), 0);
+        const exchangedKrw = state.exchanges.reduce((s, x) => s + Number(x.krw), 0);
+        const cashExpenses = state.expenses.filter(x => x.currency === "MYR" && x.payment === "cash");
+        const usedCashMyr = cashExpenses.reduce((s, x) => s + Number(x.amount), 0);
+        const cashCostUsed = cashExpenses.reduce((s, x) => s + Number(x.krwValue), 0);
+        const remainingMyr = exchangedMyr - usedCashMyr;
+        const remainingCost = Math.max(0, exchangedKrw - cashCostUsed);
+        const currentRate = remainingMyr > 0 ? remainingCost / remainingMyr : (exchangedMyr > 0 ? exchangedKrw / exchangedMyr : 0);
+        const spentKrw = state.expenses.reduce((s, x) => s + Number(x.krwValue), 0);
+        return {exchangedMyr, exchangedKrw, usedCashMyr, remainingMyr, remainingCost, currentRate, spentKrw};
+      }
+      function render() {
+        const t = totals();
+        $("#totalKrw").textContent = won(t.spentKrw);
+        $("#myrBalance").textContent = myr(t.remainingMyr);
+        $("#averageRate").textContent = t.currentRate ? `1 MYR = ${won(t.currentRate)}` : "환전 전";
+        $("#expenseCount").textContent = `${state.expenses.length}건`;
+        $("#totalNote").textContent = state.expenses.length ? `한국 비용과 현지 실사용액을 합친 금액이에요.` : "첫 지출을 기록하면 여기에서 바로 확인할 수 있어요.";
+        $("#recordSummary").textContent = state.exchanges.length || state.expenses.length ? `총 ${state.exchanges.length + state.expenses.length}개 기록` : "아직 기록이 없어요";
+        renderHistory(); renderCategories(); updateHints();
+      }
+      function renderHistory() {
+        const records = [
+          ...state.exchanges.map(x => ({...x, kind:"exchange"})),
+          ...state.expenses.map(x => ({...x, kind:"expense"}))
+        ].sort((a,b) => (b.date + b.createdAt).localeCompare(a.date + a.createdAt)).slice(0, 12);
+        if (!records.length) {
+          $("#history").innerHTML = `<div class="empty"><div class="empty-icon">＋</div><strong>여행 준비 비용부터 기록해보세요</strong><span>항공권, 공항버스, 숙박도 원화로 바로 추가할 수 있어요.</span></div>`;
+          return;
+        }
+        $("#history").innerHTML = `<ul class="transaction-list">${records.map(item => {
+          const exchange = item.kind === "exchange";
+          const title = exchange ? (item.note || "환전") : (item.note || item.category);
+          const meta = exchange ? `${item.date} · 환전` : `${item.date} · ${item.category} · ${item.payment === "cash" ? "현금" : item.payment === "card" ? "카드" : "계좌이체"}${item.estimated ? " · 예상" : ""}`;
+          const amount = exchange ? won(item.krw) : won(item.krwValue);
+          const foreign = exchange ? `+ ${myr(item.myr)}` : item.currency === "MYR" ? myr(item.amount) : "";
+          return `<li class="transaction"><div class="tx-icon" aria-hidden="true">${exchange ? "⇄" : categoryIcons[item.category] || "•"}</div><div class="tx-main"><div class="tx-title">${esc(title)}</div><div class="tx-meta">${esc(meta)}</div></div><div class="tx-amount">${exchange ? "" : "− "}${amount}<span class="tx-foreign">${foreign}</span>${item.estimated ? `<button class="delete-btn" data-finalize="${esc(item.id)}">청구액 반영</button>` : ""}<button class="delete-btn" data-delete="${item.kind}" data-id="${esc(item.id)}">삭제</button></div></li>`;
+        }).join("")}</ul>`;
+      }
+      function renderCategories() {
+        const grouped = state.expenses.reduce((map, item) => { map[item.category] = (map[item.category] || 0) + Number(item.krwValue); return map; }, {});
+        const entries = Object.entries(grouped).sort((a,b) => b[1]-a[1]);
+        if (!entries.length) { $("#categories").innerHTML = `<div class="empty"><strong>분류별 비용이 여기에 보여요</strong><span>지출을 기록하면 자동으로 정리됩니다.</span></div>`; return; }
+        const max = Math.max(...entries.map(x => x[1]));
+        $("#categories").innerHTML = `<div class="bars">${entries.map(([name,value]) => `<div class="bar-row"><div class="bar-label"><span>${categoryIcons[name] || "•"} ${esc(name)}</span><strong>${won(value)}</strong></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,value/max*100)}%"></div></div></div>`).join("")}</div>`;
+      }
+      function updateHints() {
+        const place = document.querySelector('input[name="place"]:checked')?.value || "MY";
+        const payment = $("#expensePayment").value;
+        const amount = Number($("#expenseAmount").value || 0);
+        const t = totals();
+        $("#currencyLabel").textContent = place === "MY" ? "(MYR)" : "(KRW)";
+        $("#actualKrwField").hidden = !(place === "MY" && payment === "card");
+        if (place === "KR") $("#conversionHint").textContent = "입력한 원화 금액이 그대로 반영돼요.";
+        else if (!t.currentRate) $("#conversionHint").textContent = "먼저 환전을 등록하면 실제 환율로 계산할 수 있어요.";
+        else $("#conversionHint").textContent = amount ? `예상 ${won(amount * t.currentRate)} · 1 MYR = ${won(t.currentRate)}` : `현재 1 MYR = ${won(t.currentRate)}`;
+      }
+      function showToast(message) { const el = $("#toast"); el.textContent = message; el.classList.add("show"); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => el.classList.remove("show"), 2300); }
+      function closeDialog(dialog) { dialog.close(); }
+      function openDialog(id) { const dialog = document.getElementById(id); dialog.showModal(); setTimeout(() => dialog.querySelector("input:not([type=radio])")?.focus(), 60); }
+      function download(name, content, type) { const blob = new Blob([content], {type}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
+
+      function createExpense(input) {
+        const place = input.place; const payment = input.payment; const amount = Number(input.amount); const t = totals();
+        if (!["MY", "KR"].includes(place)) throw new Error("사용 지역을 확인해주세요.");
+        if (!["cash", "card", "transfer"].includes(payment)) throw new Error("결제 방식을 확인해주세요.");
+        if (!Number.isFinite(amount) || amount <= 0) throw new Error("금액은 0보다 커야 해요.");
+        if (place === "MY" && payment === "cash" && !t.currentRate) throw new Error("먼저 환전을 등록해주세요.");
+        if (place === "MY" && payment === "cash" && amount > t.remainingMyr + .001) throw new Error("링깃 현금 잔액보다 큰 금액이에요.");
+        let krwValue = amount; let estimated = false;
+        if (place === "MY") {
+          const actual = Number(input.actualKrw || 0);
+          krwValue = payment === "card" && actual > 0 ? actual : amount * t.currentRate;
+          estimated = payment === "card" && actual <= 0;
+          if (!krwValue) throw new Error("환율 계산을 위해 환전을 먼저 등록하거나 실제 카드 청구액을 입력해주세요.");
+        }
+        const expense = {id:uid(), createdAt:new Date().toISOString(), date:input.date || today(), place, currency:place === "MY" ? "MYR" : "KRW", amount, category:input.category || "기타", payment, note:String(input.note || "").trim().slice(0,60), krwValue, appliedRate:place === "MY" ? krwValue/amount : 1, estimated};
+        state.expenses.push(expense); save(); return expense;
+      }
+
+      function createExchange(input) {
+        const krw = Number(input.krw); const amountMyr = Number(input.myr);
+        if (!Number.isFinite(krw) || krw <= 0 || !Number.isFinite(amountMyr) || amountMyr <= 0) throw new Error("환전 금액은 0보다 커야 해요.");
+        const exchange = {id:uid(), createdAt:new Date().toISOString(), date:input.date || today(), krw, myr:amountMyr, note:String(input.note || "").trim().slice(0,60)};
+        state.exchanges.push(exchange); save(); return exchange;
+      }
+
+      $("#expenseForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        try {
+          createExpense({place:form.get("place"), payment:form.get("payment"), amount:form.get("amount"), actualKrw:form.get("actualKrw"), date:form.get("date"), category:form.get("category"), note:form.get("note")});
+          event.currentTarget.reset(); $("#expenseDate").value = today(); document.querySelector('input[name="place"][value="MY"]').checked = true; closeDialog($("#expenseDialog")); showToast("지출을 저장했어요.");
+        } catch (error) { showToast(error.message); }
+      });
+      $("#exchangeForm").addEventListener("submit", event => {
+        event.preventDefault(); const form = new FormData(event.currentTarget);
+        try {
+          const exchange = createExchange({krw:form.get("krw"), myr:form.get("myr"), date:form.get("date"), note:form.get("note")});
+          event.currentTarget.reset(); $("#exchangeDate").value = today(); closeDialog($("#exchangeDialog")); showToast(`1 MYR = ${won(exchange.krw/exchange.myr)}으로 등록했어요.`);
+        } catch (error) { showToast(error.message); }
+      });
+      $("#history").addEventListener("click", event => {
+        const finalize = event.target.closest("[data-finalize]");
+        if (finalize) {
+          const expense = state.expenses.find(x => x.id === finalize.dataset.finalize); if (!expense) return;
+          const value = Number(prompt("실제 카드 청구 원화 금액을 입력해주세요.", String(Math.round(expense.krwValue))));
+          if (!Number.isFinite(value) || value <= 0) return;
+          expense.krwValue = value; expense.appliedRate = value / expense.amount; expense.estimated = false; save(); showToast("실제 청구액을 반영했어요."); return;
+        }
+        const button = event.target.closest("[data-delete]"); if (!button) return;
+        const label = button.dataset.delete === "exchange" ? "환전 기록" : "지출 기록";
+        if (!confirm(`${label}을 삭제할까요?`)) return;
+        const key = button.dataset.delete === "exchange" ? "exchanges" : "expenses";
+        state[key] = state[key].filter(x => x.id !== button.dataset.id); save(); showToast("기록을 삭제했어요.");
+      });
+      $$('[data-open]').forEach(button => button.addEventListener("click", () => openDialog(button.dataset.open)));
+      $$("dialog .close-btn").forEach(button => button.addEventListener("click", () => closeDialog(button.closest("dialog"))));
+      $$("dialog").forEach(dialog => dialog.addEventListener("click", event => { if (event.target === dialog) closeDialog(dialog); }));
+      $$('input[name="place"], #expensePayment, #expenseAmount').forEach(el => el.addEventListener("input", updateHints));
+      $("#exchangeKrw").addEventListener("input", exchangePreview); $("#exchangeMyr").addEventListener("input", exchangePreview);
+      function exchangePreview() { const krw = Number($("#exchangeKrw").value); const amountMyr = Number($("#exchangeMyr").value); $("#exchangeHint").textContent = krw && amountMyr ? `적용 환율: 1 MYR = ${won(krw/amountMyr)}` : "두 금액을 입력하면 실제 환율을 계산해요."; }
+      $("#menuButton").addEventListener("click", () => { const hidden = $("#dataMenu").hidden; $("#dataMenu").hidden = !hidden; $("#menuButton").setAttribute("aria-expanded", String(hidden)); });
+      document.addEventListener("click", event => { if (!event.target.closest("#dataMenu, #menuButton")) { $("#dataMenu").hidden = true; $("#menuButton").setAttribute("aria-expanded", "false"); } });
+      $("#exportJson").addEventListener("click", () => { download(`malaysia-trip-wallet-${today()}.json`, JSON.stringify(state, null, 2), "application/json"); showToast("백업 파일을 저장했어요."); });
+      $("#exportCsv").addEventListener("click", () => {
+        const rows = [["구분","날짜","지역","분류","결제","사용금액","통화","원화환산","메모"], ...state.exchanges.map(x => ["환전",x.date,"한국","환전","현금",x.myr,"MYR",x.krw,x.note]), ...state.expenses.map(x => ["지출",x.date,x.place === "MY" ? "말레이시아" : "한국",x.category,x.payment,x.amount,x.currency,Math.round(x.krwValue),x.note])];
+        const csv = "\ufeff" + rows.map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g,'""')}"`).join(",")).join("\r\n"); download(`malaysia-trip-wallet-${today()}.csv`, csv, "text/csv;charset=utf-8"); showToast("CSV 파일을 저장했어요.");
+      });
+      $("#importJson").addEventListener("change", async event => { const file = event.target.files[0]; if (!file) return; try { const parsed = JSON.parse(await file.text()); if (!Array.isArray(parsed.exchanges) || !Array.isArray(parsed.expenses)) throw new Error(); if (!confirm("현재 기록을 백업 파일의 내용으로 바꿀까요?")) return; state = parsed; save(); showToast("백업을 불러왔어요."); } catch (_) { showToast("올바른 백업 파일이 아니에요."); } finally { event.target.value = ""; } });
+      function registerWebMcp() {
+        const context = document.modelContext;
+        if (!context?.registerTool) return;
+        const register = tool => { try { void Promise.resolve(context.registerTool(tool)).catch(() => {}); } catch (_) {} };
+        register({name:"get_trip_wallet_summary", title:"여행 지갑 요약 확인", description:"현재 총 여행비, 링깃 현금 잔액, 적용 중인 현금 환율을 확인합니다.", inputSchema:{type:"object",properties:{},additionalProperties:false}, annotations:{readOnlyHint:true,untrustedContentHint:false}, execute:() => { const t=totals(); return {totalSpentKrw:Math.round(t.spentKrw),cashBalanceMyr:Number(t.remainingMyr.toFixed(2)),cashRateKrwPerMyr:Number(t.currentRate.toFixed(2)),expenseCount:state.expenses.length}; }});
+        register({name:"record_currency_exchange", title:"환전 기록 추가", description:"실제로 지불한 원화와 받은 말레이시아 링깃을 여행 지갑에 기록합니다.", inputSchema:{type:"object",properties:{krw:{type:"number",exclusiveMinimum:0},myr:{type:"number",exclusiveMinimum:0},date:{type:"string",format:"date"},note:{type:"string",maxLength:60}},required:["krw","myr"],additionalProperties:false}, annotations:{readOnlyHint:false,untrustedContentHint:false}, execute:input => { const x=createExchange(input); return {id:x.id,rateKrwPerMyr:Number((x.krw/x.myr).toFixed(2)),cashBalanceMyr:Number(totals().remainingMyr.toFixed(2))}; }});
+        register({name:"record_trip_expense", title:"여행 지출 추가", description:"한국 원화 또는 말레이시아 링깃 지출을 여행 지갑에 기록합니다.", inputSchema:{type:"object",properties:{place:{type:"string",enum:["KR","MY"]},amount:{type:"number",exclusiveMinimum:0},category:{type:"string",enum:["식비","교통","항공","숙박","관광","쇼핑","통신","기타"]},payment:{type:"string",enum:["cash","card","transfer"]},actualKrw:{type:"number",exclusiveMinimum:0},date:{type:"string",format:"date"},note:{type:"string",maxLength:60}},required:["place","amount","category","payment"],additionalProperties:false}, annotations:{readOnlyHint:false,untrustedContentHint:false}, execute:input => { const x=createExpense(input); return {id:x.id,krwValue:Math.round(x.krwValue),estimated:x.estimated,totalSpentKrw:Math.round(totals().spentKrw)}; }});
+      }
+      $("#expenseDate").value = today(); $("#exchangeDate").value = today(); render(); registerWebMcp();
+      if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    })();
+  </script>
+</body>
+</html>
